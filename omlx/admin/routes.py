@@ -153,6 +153,14 @@ class ModelSettingsRequest(BaseModel):
     reasoning_parser: str | None = None
     is_pinned: bool | None = None
     is_default: bool | None = None
+    dflash_enabled: Optional[bool] = None
+    dflash_draft_model: Optional[str] = None
+    dflash_draft_quant_bits: Optional[int] = None
+    reasoning_parser: Optional[str] = None
+    guided_grammar_enabled: Optional[bool] = None
+    guided_grammar: Optional[str] = None
+    is_pinned: Optional[bool] = None
+    is_default: Optional[bool] = None
     # Security: per-model opt-in for trust_remote_code (issue #926)
     trust_remote_code: bool | None = None
 
@@ -2104,6 +2112,11 @@ async def update_model_settings(
 
     if "reasoning_parser" in sent:
         current_settings.reasoning_parser = request.reasoning_parser or None
+    if "guided_grammar_enabled" in sent:
+        current_settings.guided_grammar_enabled = request.guided_grammar_enabled or False
+    if "guided_grammar" in sent:
+        grammar = request.guided_grammar.strip() if request.guided_grammar else None
+        current_settings.guided_grammar = grammar or None
     if request.is_pinned is not None:
         current_settings.is_pinned = request.is_pinned
         # Also update the engine pool entry
